@@ -1,5 +1,6 @@
 # Created on Jun. 22, 2018
-# An implementation of the homonymous Matlab function, using Bilinear transform
+# An implementation of the homonymous Matlab function,
+# using Bilinear transform (Tustin's method).
 # Author: yurochka
 
 from numpy.polynomial.polynomial import polyadd, polymul, polypow
