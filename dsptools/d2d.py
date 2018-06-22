@@ -1,3 +1,10 @@
+# Created on Jun. 22, 2018
+# An implementation of the homonymous Matlab function, using Bilinear transform
+# Author: yurochka
+
+from numpy.polynomial.polynomial import polyadd, polymul, polypow
+
+
 def d2d(b, a, T):
     nb = len(b)
     na = len(a)
