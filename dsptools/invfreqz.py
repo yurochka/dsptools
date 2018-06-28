@@ -1,6 +1,5 @@
 # Created on Jun. 28, 2018
 # An implementation of the homonymous Matlab function.
-# Author: yurochka
 
 import numpy as np
 from .polystab import polystab
@@ -14,10 +13,12 @@ na - denominator order
 wt - weight array, same length with h
 gauss - whether to use Gauss-Newton method, default False
 real - whether real or complex filter, default True
-iter - maximum number of iteration when using Gauss-Newton method, default 30
+maxiter - maximum number of iteration when using Gauss-Newton method, default 30
 tol - tolerance when using Gauss-Newton method, default 0.01
 """
-def invfreqz(h, w, nb, na, wt=None, gauss=False, real=True, iter=30, tol=0.01):
+
+
+def invfreqz(h, w, nb, na, wt=None, gauss=False, real=True, maxiter=30, tol=0.01):
     if len(h) != len(w):
         raise ValueError('H and W should be of equal length.')
     nb = nb + 1
@@ -38,18 +39,18 @@ def invfreqz(h, w, nb, na, wt=None, gauss=False, real=True, iter=30, tol=0.01):
     D_b = wf * np.mat(np.ones((1, na+nb)))
     D = np.multiply(D_a, D_b)
     if real:
-        R = np.real(D.T * D)
-        Vd = np.real(D.T * np.multiply(-h_t, wf))
+        R = np.real(D.H * D)
+        Vd = np.real(D.H * np.multiply(-h_t, wf))
     else:
-        R = D.T * D
-        Vd = D.T * np.multiply(-h_t, wf)
+        R = D.H * D
+        Vd = D.H * np.multiply(-h_t, wf)
     th = R.I * Vd
     tht = th.T.getA()
     a = np.append([1], tht[0][0:na])
     b = tht[0][na:(na+nb)]
     if not gauss:
         return b, a
-    else:  ## TODO: Gauss-Newton method
+    else:
         indb = np.arange(len(b))
         indg = np.arange(len(a))
         a = polystab(a)
@@ -57,12 +58,12 @@ def invfreqz(h, w, nb, na, wt=None, gauss=False, real=True, iter=30, tol=0.01):
         GC_a = np.mat(a) * OM[indg, :]
         GC = np.transpose(GC_b / GC_a)
         e = np.multiply(GC - h_t, wf)
-        Vcap = e.T * e
+        Vcap = e.H * e
         t = np.mat(np.append(a[1:(na+1)], b[0:nb])).T
         gndir = 2 * tol + 1
         l = 0
         st = 0
-        while (np.linalg.norm(gndir)>tol) and (l<iter) and (st!=1):
+        while (np.linalg.norm(gndir)>tol) and (l<maxiter) and (st!=1):
             l = l + 1
             D31_a = np.transpose(OM[1:(na+1), :])
             D31_b = - GC / np.transpose(a * OM[0:(na+1), :])
@@ -77,29 +78,29 @@ def invfreqz(h, w, nb, na, wt=None, gauss=False, real=True, iter=30, tol=0.01):
             D3 = np.multiply(D3_a, D3_b)
             e = np.multiply(GC - h_t, wf)
             if real:
-                R = np.real(D3.T * D3)
-                Vd = np.real(D3.T * e)
+                R = np.real(D3.H * D3)
+                Vd = np.real(D3.H * e)
             else:
-                R = D3.T * D3
-                Vd = D3.T * e
+                R = D3.H * D3
+                Vd = D3.H * e
             gndir = R.I * Vd
             ll = 0
             k = 1
             V1 = np.mat(Vcap + 1)
-            while (V1[0][0]>Vcap) and (ll<20):
+            while (V1[0][0] > Vcap) and (ll < 20):
                 t1 = t - k * gndir
                 if ll == 19:
                     t1 = t
-                t1_v = t1.T.getA()[0]
+                t1_v = np.transpose(t1).getA()[0]
                 a = polystab(np.append([1], t1_v[0:na]))
                 t1_v[0:na] = a[1:(na+1)]
-                b = t1_v[na:(na+nb)];
+                b = t1_v[na:(na+nb)]
                 GC_b = np.mat(b) * OM[indb, :]
                 GC_a = np.mat(a) * OM[indg, :]
                 GC = np.transpose(GC_b / GC_a)
                 V1_a = np.multiply(GC-h_t, wf)
-                V1 = np.transpose(V1_a) * V1_a
-                t1 = np.append(a[1:(na+1)], b[0:nb])
+                V1 = V1_a.H * V1_a
+                t1 = np.mat(np.append(a[1:(na+1)], b[0:nb])).T
                 k = k / 2
                 ll = ll + 1
                 if ll == 20:
