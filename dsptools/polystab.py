@@ -10,10 +10,10 @@ def polystab(a):
         return a
     else:
         v = np.roots(a)
-        for vi in v:
-            if vi != 0:
-                vs = 0.5 * (np.sign(abs(vi) - 1) + 1)
-                vi = (1 - vs) * vi + vs / vi.conj()
+        for i in range(len(v)):
+            if v[i] != 0:
+                vs = 0.5 * (np.sign(abs(v[i]) - 1) + 1)
+                v[i] = (1 - vs) * v[i] + vs / v[i].conj()
         ind = np.nonzero(v)
         b = a[ind[0][0]] * np.poly(v)
         if np.iscomplex(b).any():
