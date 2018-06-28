@@ -1,5 +1,6 @@
 # Created on Jun. 28, 2018
 # An implementation of the homonymous Matlab function.
+# Author: yurochka
 
 import numpy as np
 
