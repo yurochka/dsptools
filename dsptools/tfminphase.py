@@ -8,16 +8,13 @@ import scipy.signal as sg
 
 def tfminphase(b, a):
     z, p, k = sg.tf2zpk(b, a)
-    print(z,p,k)
-    for zi in z:
-        if np.abs(zi) > 1:
-            k = k * zi
-            zn = 1 / zi
-            zi = zn
-    for pi in p:
-        if np.abs(pi) > 1:
-            k = k / pi
-            pi = 1 / pi
+    for i in range(len(z)):
+        if np.abs(z[i]) > 1:
+            k = k * z[i]
+            z[i] = 1 / z[i]
+    for i in range(len(p)):
+        if np.abs(p[i]) > 1:
+            k = k / p[i]
+            p[i] = 1 / p[i]
     bn, an = sg.zpk2tf(z, p, k)
-    print(z,p,k)
     return bn, an
