@@ -20,6 +20,8 @@ def d2d(b, a, T):
 
 def _polytustin(a, T):
     n = len(a)
+    if sum(a[1:]) == 0:
+        return a
     a_new = 0
     num = [(T-1)/(T+1), 1]
     den = [1, (T-1)/(T+1)]
