@@ -5,5 +5,6 @@ from .tfminphase import tfminphase
 from .prony import prony
 from .convmtx import convmtx
 from .stmcb import stmcb
+from .fitiir import fitiir
 
-__all__ = ['d2d', 'invfreqz', 'polystab', 'tfminphase', 'prony', 'convmtx', 'stmcb']
+__all__ = ['d2d', 'invfreqz', 'polystab', 'tfminphase', 'prony', 'convmtx', 'stmcb', 'fitiir']
