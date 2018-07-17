@@ -15,7 +15,7 @@ def prony(h, nb, na):
     c = h[0]
     if c == 0:
         c = 1
-    H = np.mat(toeplitz(h / c, np.append([1], np.zeros(k))))
+    H = np.mat(toeplitz(np.array(h) / c, np.append([1], np.zeros(k))))
     if k > na:
         H = H[:, 0:(na+1)]
     H1 = H[0:(nb+1), :]
